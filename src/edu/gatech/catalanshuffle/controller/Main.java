@@ -84,7 +84,8 @@ public class Main extends Application {
         	"Polygon Triangulation",
         	"Single Dyck Path",
             "100 Dyck Paths",
-            "Dyck Path Coupling"
+            "Dyck Path Coupling",
+			"Paralle Dyck Paths"
         );
     	viewType.setValue(viewType.getItems().get(0));
     	
@@ -220,16 +221,18 @@ public class Main extends Application {
     	int width = 800;
     	int height = 450;
     	switch(type) {
-    	case "Polygon Triangulation": 
-    		return new PolygonTriangulationCanvas(n, width, height, lambda);
-    	case "Single Dyck Path": 
-    		return new DyckPathCanvas(n, width, height, lambda);
-    	case "100 Dyck Paths": 
-    		return new DyckPathCollectionCanvas(n, width, height, lambda, 100);
-    	case "Dyck Path Coupling": 
-    		return new DyckPathCouplingCanvas(n, width, height, lambda, false, true);
-    	default: 
-    		return null;
+			case "Polygon Triangulation":
+    			return new PolygonTriangulationCanvas(n, width, height, lambda);
+    		case "Single Dyck Path":
+    			return new DyckPathCanvas(n, width, height, lambda);
+    		case "100 Dyck Paths":
+    			return new DyckPathCollectionCanvas(n, width, height, lambda, 100);
+    		case "Dyck Path Coupling":
+    			return new DyckPathCouplingCanvas(n, width, height, lambda, false, true);
+			case "Paralle Dyck Paths":
+				return new DyckPathParallelCanvas(n, width, height, lambda, false, true);
+			default:
+    			return null;
     	}
     }
     
