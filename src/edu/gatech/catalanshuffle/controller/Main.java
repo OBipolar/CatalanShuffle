@@ -179,7 +179,17 @@ public class Main extends Application {
             	canvas.reset();
             }
         });
-        
+
+		// manually set to adjacency shuffle
+		Button adj = new Button("Adjacent Shuffle");
+		adj.setPrefSize(100, 20);
+		adj.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+
+			}
+		});
+
 //        Label lambdaLabel = new Label("Lambda: ");
         TextField lambdaInput = new TextField();
         lambdaInput.setPrefSize(100, 20);
@@ -213,13 +223,14 @@ public class Main extends Application {
 //            }
 //        });
         
-        vbox.getChildren().addAll(pause, play, tick, tick5, reset, lambdaInput, applyLambda);
+        vbox.getChildren().addAll(pause, play, tick, tick5, reset, adj, lambdaInput, applyLambda);
         return vbox;
     }
     
     private CatalanModelCanvas CatalanModelCanvasFactory(int n, String type) {
     	int width = 800;
     	int height = 450;
+		boolean isAdj = false; // adjacent shuffle toggle (by default to random transposition)
     	switch(type) {
 			case "Polygon Triangulation":
     			return new PolygonTriangulationCanvas(n, width, height, lambda);
