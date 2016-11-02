@@ -181,12 +181,12 @@ public class Main extends Application {
         });
 
 		// manually set to adjacency shuffle
-		Button adj = new Button("Adjacent Shuffle");
+		Button adj = new Button("Adj/Rand");
 		adj.setPrefSize(100, 20);
 		adj.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-
+				canvas.setAdjToggle();
 			}
 		});
 
@@ -231,7 +231,6 @@ public class Main extends Application {
     	int width = 800;
     	int height = 450;
 		boolean isAdj = false; // adjacent shuffle toggle (by default to random transposition)
-    	// TODO: add adjacent shuffle support for each canvas
 		switch(type) {
 			case "Polygon Triangulation":
     			return new PolygonTriangulationCanvas(n, width, height, lambda);

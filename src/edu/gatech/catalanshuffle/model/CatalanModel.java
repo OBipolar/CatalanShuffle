@@ -9,7 +9,8 @@ public abstract class CatalanModel {
 	protected final int n;
 	// whether the stationary distribution should be weighted by some factor or uniform
 	protected double weightedLambda;
-	
+	protected boolean adjToggle; //toggle between adjacent shuffle or random shuffle
+
 	public static final Random rand = new Random();
 	
 	public CatalanModel(int n) {
@@ -19,6 +20,7 @@ public abstract class CatalanModel {
 	public CatalanModel(int n, double weightedLambda) {
 		this.n = n;
 		this.weightedLambda = weightedLambda;
+		this.adjToggle = false;
 	}
 	
 	public int getN() {
@@ -32,7 +34,9 @@ public abstract class CatalanModel {
 	public void setWeightedLambda(double weightedLambda) {
 		this.weightedLambda = weightedLambda;
 	}
-	
+
+	public void setAdjToggle() { this.adjToggle = !this.adjToggle; }
+
 	public void shuffle(int itr) {
 		for (int i = 0; i < itr; i++) {
 			shuffleOnce();

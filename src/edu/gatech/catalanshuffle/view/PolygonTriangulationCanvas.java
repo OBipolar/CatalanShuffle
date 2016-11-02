@@ -45,6 +45,8 @@ public class PolygonTriangulationCanvas extends CatalanModelCanvas {
 		draw();
 	}
 
+	// TODO: add adj toggle if possible
+	
 	private void draw() {
 		int centralDiagonal = Triangulation.testStatisticsValue
 				(TestStatistics.LongestDiagonal, model.getRoot(), null);

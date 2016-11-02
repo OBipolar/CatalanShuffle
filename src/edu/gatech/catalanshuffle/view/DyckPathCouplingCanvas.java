@@ -61,7 +61,11 @@ public class DyckPathCouplingCanvas extends CatalanModelCanvas {
 		top.setWeightedLambda(weightedLambda);
 		bottom.setWeightedLambda(weightedLambda);
 	}
-	
+
+	public void setAdjToggle() {
+		top.setAdjToggle();
+		bottom.setAdjToggle();
+	}
 	public void reset() {
 		top.reset();
 		bottom.reset();

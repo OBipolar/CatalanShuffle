@@ -35,7 +35,13 @@ public class DyckPathCollectionCanvas extends CatalanModelCanvas {
 			m.setWeightedLambda(weightedLambda);
 		}
 	}
-	
+
+	public void setAdjToggle() {
+		for (DyckPath m : model) {
+			m.setAdjToggle();
+		}
+	}
+
 	public void reset() {
 		for (DyckPath p : model) {
 			p.reset();

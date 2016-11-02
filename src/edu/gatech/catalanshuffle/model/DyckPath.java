@@ -119,7 +119,11 @@ public class DyckPath extends CatalanModel {
 	}
 
 	public void shuffleOnce() {
-		shuffleOnce(rand.nextInt(2 * n), rand.nextInt(2 * n));
+		if (adjToggle) {
+			shuffleAdj();
+		} else {
+			shuffleOnce(rand.nextInt(2 * n), rand.nextInt(2 * n));
+		}
 	}
 	
 	public void shuffleOnce(int index1, int index2) {

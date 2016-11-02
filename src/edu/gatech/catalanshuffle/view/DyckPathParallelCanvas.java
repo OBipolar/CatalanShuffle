@@ -5,12 +5,14 @@ import edu.gatech.catalanshuffle.model.DyckPath.InitType;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class DyckPathParallelCanvas extends CatalanModelCanvas {
 
+	private ArrayList<DyckPath> pathSeries = new ArrayList<DyckPath>();
 	private DyckPath top;
 	private DyckPath bottom;
 
@@ -61,7 +63,9 @@ public class DyckPathParallelCanvas extends CatalanModelCanvas {
 		top.setWeightedLambda(weightedLambda);
 		bottom.setWeightedLambda(weightedLambda);
 	}
-	
+
+	public void setAdjToggle() {}
+
 	public void reset() {
 		top.reset();
 		bottom.reset();
