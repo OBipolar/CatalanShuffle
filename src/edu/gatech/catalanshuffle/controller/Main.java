@@ -27,6 +27,8 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import edu.gatech.catalanshuffle.view.*;
 
+// // todo: add catlan number output solution
+
 public class Main extends Application {
 	
 	public static final int TICK_RATE = 400;
@@ -134,8 +136,25 @@ public class Main extends Application {
             	}
             }
         });
-    	
-    	hbox.getChildren().addAll(viewType, nLabel, nValue, nSlider, tickLabel, tickValue, tickSlider);
+
+		Slider pathNumSlider = new Slider(1, 25, INITIAL_N);
+		Label pathNumLabel = new Label("Path Num: ");
+		Label pathNumValue = new Label(Integer.toString((int)nSlider.getValue()));
+		pathNumLabel.setFont(new Font("Arial", 15));
+		pathNumLabel.setTextFill(Color.WHITE);
+		pathNumValue.setFont(new Font("Arial", 15));
+		pathNumValue.setTextFill(Color.WHITE);
+		pathNumSlider.valueProperty().addListener(new ChangeListener<Number>() {
+			public void changed(ObservableValue<? extends Number> ov,
+								Number old_val, Number new_val) {
+				int n = (int)pathNumSlider.getValue();
+				pathNumValue.setText(String.format("%02d", n));
+				System.out.print(n);
+//				setupCanvas(n, viewType.getValue());
+			}
+		});
+
+    	hbox.getChildren().addAll(viewType, nLabel, nValue, nSlider, tickLabel, tickValue, tickSlider, pathNumLabel, pathNumValue, pathNumSlider);
     	return hbox;
     }
     
@@ -241,7 +260,7 @@ public class Main extends Application {
     		case "Dyck Path Coupling":
     			return new DyckPathCouplingCanvas(n, width, height, lambda, false, true);
 			case "Paralle Dyck Paths":
-				return new DyckPathParallelCanvas(n, width, height, lambda, false, true);
+				return new DyckPathParallelCanvas(n, width, height, lambda, 10);
 			default:
     			return null;
     	}

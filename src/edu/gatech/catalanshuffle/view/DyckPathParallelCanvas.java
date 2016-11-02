@@ -6,116 +6,104 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class DyckPathParallelCanvas extends CatalanModelCanvas {
+    private DyckPath[] model;
 
-	private ArrayList<DyckPath> pathSeries = new ArrayList<DyckPath>();
-	private DyckPath top;
-	private DyckPath bottom;
+    public DyckPathParallelCanvas(int n, double width, double height, double weightedLambda, int size) {
+        super(n, width, height);
+        this.model = new DyckPath[size];
+        for (int i = 0; i < size; i++) {
+            model[i] = new DyckPath(n, InitType.BUTTOM);
+        }
+        draw();
+    }
 
-	private int difference;
-	private int tickCounter;
-	//number of shuffles it takes for the two Dyck paths to merge.
-	private List<Integer> mergeTime;
+    public void tick() {
+        for (DyckPath p : model) {
+            p.shuffleOnce();
+        }
+        draw();
+    }
 
-	private boolean independentShuffling;
+    public void setWeightedLambda(double weightedLambda) {
+        for (DyckPath m : model) {
+            m.setWeightedLambda(weightedLambda);
+        }
+    }
 
-	public static final Random rand = new Random();
+    public void setAdjToggle() {
+        for (DyckPath m : model) {
+            m.setAdjToggle();
+        }
+    }
 
-	public DyckPathParallelCanvas(int n, double width, double height, double weightedLambda) {
-		this(n, width, height, weightedLambda, false, true);
-	}
+    public void reset() {
+        for (DyckPath p : model) {
+            p.reset();
+        }
+        draw();
+    }
 
-	public DyckPathParallelCanvas(int n, double width, double height, double weightedLambda,
-                                  boolean independentShuffling, boolean lazyChain) {
-		super(n, width, height);
-		this.top = new DyckPath(n, InitType.TOP, lazyChain, false, weightedLambda);
-		this.bottom = new DyckPath(n, InitType.BUTTOM, lazyChain, false, weightedLambda);
-		this.independentShuffling = independentShuffling;
-		this.difference = n / 2;
-		this.mergeTime =  new ArrayList<Integer>();
-		this.tickCounter = 0;
-		draw();
-	}
-	
-	public void tick() {
-		int index1 = rand.nextInt(2 * top.getN());
-		int index2 = rand.nextInt(2 * top.getN());
-		boolean firstIndexValue = rand.nextBoolean();
-		
-		top.shuffleOnce(index1, index2, firstIndexValue);
-		
-		if (independentShuffling) {
-			index1 = rand.nextInt(2 * bottom.getN());
-			index2 = rand.nextInt(2 * bottom.getN());
-			firstIndexValue = rand.nextBoolean();
-		}
-		bottom.shuffleOnce(index1, index2, firstIndexValue);
-		
-		tickCounter++;
-		draw();
-	}
-	
-	public void setWeightedLambda(double weightedLambda) {
-		top.setWeightedLambda(weightedLambda);
-		bottom.setWeightedLambda(weightedLambda);
-	}
-
-	public void setAdjToggle() {}
-
-	public void reset() {
-		top.reset();
-		bottom.reset();
-		this.difference = top.getN() / 2;
-		this.tickCounter = 0;
-		draw();
-	}
-	
-	private void draw() {
-		double width = getWidth();
+    private void draw() {
+        double width = getWidth();
         double height = getHeight();
-        int length = 2 * top.getN();
+        int length = 2 * model[0].getN();
         double unitWidth = width / length;
-        double unitHeight = height / top.getN();
-        int curDifference = 0;
+        double unitHeight = height / model[0].getN();
 
         GraphicsContext gc = getGraphicsContext2D();
         gc.clearRect(0, 0, width, height);
         gc.setStroke(Color.BLUE);
         gc.setLineWidth(5);
-        
-        double curTopHeight = height;
-        double curBottomHeight = height;
-        for (int i = 0; i < length; i++) {
-        	// only counts case that top is true and bottom is false to avoid double counting. 
-        	curDifference += (top.getModel()[i] && !bottom.getModel()[i] ? 1 : 0);
-        	double nextTopHeight = curTopHeight + (top.getModel()[i] ? -unitHeight : unitHeight);
-        	double nextBottomHeight = curBottomHeight + (bottom.getModel()[i] ? -unitHeight : unitHeight);
-        	if (curTopHeight == curBottomHeight && nextTopHeight == nextBottomHeight) {
-        		gc.setStroke(Color.PURPLE);
-        		gc.strokeLine(i*unitWidth, curTopHeight, (i+1)*unitWidth, nextTopHeight);
-        	}
-        	else {
-        		gc.setStroke(Color.RED);
-        		gc.strokeLine(i*unitWidth, curTopHeight, (i+1)*unitWidth, nextTopHeight);
-        		gc.setStroke(Color.BLUE);
-        		gc.strokeLine(i*unitWidth, curBottomHeight, (i+1)*unitWidth, nextBottomHeight);
-        	}
-        	curTopHeight = nextTopHeight;
-        	curBottomHeight = nextBottomHeight;
+
+        for (int i = 0; i < model.length; i++) {
+            DyckPath cur = model[i];
+            double curHeight = height - i * unitHeight;
+            for (int j = 0; j < length; j++) {
+                double nextHeight = curHeight + (cur.getModel()[j] ? - unitHeight : unitHeight);
+                gc.setStroke(new Color(0, 0, 1, i/(float)model.length));
+                gc.strokeLine(j*unitWidth, curHeight, (j+1)*unitWidth, nextHeight);
+                curHeight = nextHeight;
+            }
         }
-        if (difference != 0 && curDifference == 0) {
-        	mergeTime.add(tickCounter);
-        }
-        difference = curDifference;
-        
-        gc.setStroke(Color.BLACK);
-        gc.setLineWidth(1);
-        gc.strokeText("Time elapsed: " + tickCounter, 10, 20);
-        gc.strokeText("Distance: " + difference, 10, 45);
-        gc.strokeText("Coupling time: " + mergeTime, 10, 70);
-	}
+//        double unitOpacity = 1.0 / model.length;
+//        double avgHeight = 0;
+//
+//        Map<List<Double>, Double> viewModel = new HashMap<>();
+//        for (DyckPath path : model) {
+//            double curHeight = height;
+//            for (int i = 0; i < length; i++) {
+//                double nextHeight = curHeight + (path.getModel()[i] ? -unitHeight : unitHeight);
+//                List<Double> coor = new ArrayList<>();
+//                coor.add(i*unitWidth);
+//                coor.add(curHeight);
+//                coor.add((i+1)*unitWidth);
+//                coor.add(nextHeight);
+//                if (viewModel.containsKey(coor)) {
+//                    viewModel.put(coor, viewModel.get(coor) + unitOpacity);
+//                }
+//                else {
+//                    viewModel.put(coor, unitOpacity);
+//                }
+//                curHeight = nextHeight;
+//            }
+//            avgHeight += path.testStatisticsValue(DyckPath.TestStatistics.PEEK);
+//        }
+//
+//        GraphicsContext gc = getGraphicsContext2D();
+//        gc.clearRect(0, 0, width, height);
+//        gc.setLineWidth(5);
+//
+//        for (List<Double> coor : viewModel.keySet()) {
+//            gc.setStroke(new Color(0, 0, 1, Math.min(1.0, viewModel.get(coor))));
+//            gc.strokeLine(coor.get(0), coor.get(1), coor.get(2), coor.get(3));
+//        }
+//
+//        avgHeight /= model.length;
+//        gc.setStroke(Color.BLACK);
+//        gc.setLineWidth(1);
+//        gc.strokeText("Average Height: " + avgHeight, 10, 20);
+    }
 }

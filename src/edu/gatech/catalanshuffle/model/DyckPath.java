@@ -21,7 +21,9 @@ public class DyckPath extends CatalanModel {
 	public DyckPath(int n) {
 		this(n, DEFAULT_INIT_TYPE);
 	}
-	
+
+//	public DyckPath(int n, int base) { this(n, DEFAULT_INIT_TYPE, base); }
+
 	public DyckPath(int n, InitType initType) {
 		this(n, initType, false, true, 1);
 	}
