@@ -17,7 +17,7 @@ public class DyckPath extends CatalanModel {
 	private Map<Integer, Long>[] dist;
 	
 	public static final InitType DEFAULT_INIT_TYPE = InitType.TOP;
-	
+
 	public DyckPath(int n) {
 		this(n, DEFAULT_INIT_TYPE);
 	}
@@ -102,6 +102,14 @@ public class DyckPath extends CatalanModel {
 	
 	public Boolean[] getModel() {
 		return cur;
+	}
+
+	public Boolean[] deepCopyModel() {
+		Boolean[] copyModel = new Boolean[cur.length];
+		for (int i = 0; i < cur.length; i++) {
+			copyModel[i] = cur[i];
+		}
+		return copyModel;
 	}
 
 	public void shuffleAdj() {

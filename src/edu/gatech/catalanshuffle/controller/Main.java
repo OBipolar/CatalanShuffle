@@ -231,7 +231,8 @@ public class Main extends Application {
     	int width = 800;
     	int height = 450;
 		boolean isAdj = false; // adjacent shuffle toggle (by default to random transposition)
-    	switch(type) {
+    	// TODO: add adjacent shuffle support for each canvas
+		switch(type) {
 			case "Polygon Triangulation":
     			return new PolygonTriangulationCanvas(n, width, height, lambda);
     		case "Single Dyck Path":
