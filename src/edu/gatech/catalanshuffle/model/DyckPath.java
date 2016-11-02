@@ -114,6 +114,27 @@ public class DyckPath extends CatalanModel {
 		return copyModel;
 	}
 
+	// In parallel path canvas, make sure path does not corrupt with each other
+	// Keep Shuffling until no corruption
+	public void contextShuffle(Boolean[] next, Boolean[] prev) {
+		shuffleOnce();
+		if (prev == null) { // first path
+			while (! checkPathViolation(cur, next)) {
+				System.out.println("First line reshuffle");
+				shuffleOnce();
+			}
+		} else if (next == null) { // last path
+			while (! checkPathViolation(prev, cur)) {
+				System.out.println("Last line reshuffle");
+				shuffleOnce();
+			}
+		} else {
+			while ((! checkPathViolation(prev, cur)) || (! checkPathViolation(cur, next))) {
+				shuffleOnce();
+			}
+		}
+	}
+
 	public void shuffleAdj() {
 		int index1 = rand.nextInt(2*n - 1);
 		int index2 = index1 + 1;
@@ -179,7 +200,28 @@ public class DyckPath extends CatalanModel {
 		}
 		return true;
 	}
-	
+
+	public boolean checkPathViolation(Boolean[] low, Boolean[] high) {
+		int lowHeight = 0;
+		int highHeight = 2;
+		for (int i = 0; i < low.length; i++) {
+			if (low[i]) {
+				lowHeight++;
+			} else {
+				lowHeight--;
+			}
+			if (high[i]) {
+				highHeight++;
+			} else {
+				highHeight--;
+			}
+			if (lowHeight > highHeight) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public List<double[][]> distributionExperiment(long trials, int shuffleItr) {
 		return distributionExperiment(((double)trials) / catalanNumber(), shuffleItr);
 	}

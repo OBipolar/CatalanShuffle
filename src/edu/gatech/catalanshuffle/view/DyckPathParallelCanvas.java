@@ -21,9 +21,17 @@ public class DyckPathParallelCanvas extends CatalanModelCanvas {
     }
 
     public void tick() {
-        for (DyckPath p : model) {
-            p.shuffleOnce();
-        }
+//        for (int i = 0; i < model.length; i++) {
+//            System.out.print(i);
+//            model[i].contextShuffle((i - 1) >= 0 ? model[i-1].getModel() : null , (i + 1) < model.length ? model[i+1].getModel() : null);
+////            draw();
+//        }
+//        for (DyckPath p : model) {
+//            p.shuffleOnce();
+//            draw();
+//        }
+        model[5].contextShuffle(model[6].getModel(), model[4].getModel());
+//        model[5].shuffleOnce();
         draw();
     }
 
@@ -51,7 +59,7 @@ public class DyckPathParallelCanvas extends CatalanModelCanvas {
         double height = getHeight();
         int length = 2 * model[0].getN();
         double unitWidth = width / length;
-        double unitHeight = height / model[0].getN();
+        double unitHeight = height / (2 * model[0].getN());
 
         GraphicsContext gc = getGraphicsContext2D();
         gc.clearRect(0, 0, width, height);
@@ -60,10 +68,15 @@ public class DyckPathParallelCanvas extends CatalanModelCanvas {
 
         for (int i = 0; i < model.length; i++) {
             DyckPath cur = model[i];
-            double curHeight = height - i * unitHeight;
+            double curHeight = height - i * unitHeight * 2;
             for (int j = 0; j < length; j++) {
                 double nextHeight = curHeight + (cur.getModel()[j] ? - unitHeight : unitHeight);
-                gc.setStroke(new Color(0, 0, 1, i/(float)model.length));
+                // TODO: in parallel path mod, should be able to go lower than horizon
+                if (i == 5) {
+                    gc.setStroke(Color.RED);
+                } else {
+                    gc.setStroke(new Color(0,0,1,0.3));
+                }
                 gc.strokeLine(j*unitWidth, curHeight, (j+1)*unitWidth, nextHeight);
                 curHeight = nextHeight;
             }
