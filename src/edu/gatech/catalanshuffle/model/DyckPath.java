@@ -14,6 +14,8 @@ public class DyckPath extends CatalanModel {
 	private InitType initType;
 	// if chain is lazy, 50% of the time chain does not move (used for coupling)
 	private boolean lazyChain;
+	// if a chain is non catalan, then it can goes below horizon (used for paralle path)
+	private boolean nonCatalanChain;
 	private Map<Integer, Long>[] dist;
 	
 	public static final InitType DEFAULT_INIT_TYPE = InitType.TOP;
@@ -25,13 +27,14 @@ public class DyckPath extends CatalanModel {
 //	public DyckPath(int n, int base) { this(n, DEFAULT_INIT_TYPE, base); }
 
 	public DyckPath(int n, InitType initType) {
-		this(n, initType, false, true, 1);
+		this(n, initType, false, false, true, 1);
 	}
 	
-	public DyckPath(int n, InitType initType, boolean lazyChain, boolean initDist, double weightedLambda) {
+	public DyckPath(int n, InitType initType, boolean lazyChain, boolean nonCatalanChain, boolean initDist, double weightedLambda) {
 		super(n, weightedLambda);
 		this.initType = initType;
 		this.lazyChain = lazyChain;
+		this.nonCatalanChain = nonCatalanChain;
 		reset();
 		if (initDist) {
 			loadTestStatisticsDist();
@@ -183,9 +186,12 @@ public class DyckPath extends CatalanModel {
 			double a2 = Math.pow(weightedLambda, newArea);
 			// Metropolis–Hastings algorithm in order to make stationary distribution weighted by area underneath
 			double acceptProb = Math.min(1, a2/a1);
-			if (newArea < 0 || rand.nextDouble() > acceptProb) {
-				cur[index1] = !firstIndexValue;
-				cur[index2] = firstIndexValue;
+			// noncatalanchain to control whether path can go below horizon
+			if (!nonCatalanChain) {
+				if (newArea < 0 || rand.nextDouble() > acceptProb) {
+					cur[index1] = !firstIndexValue;
+					cur[index2] = firstIndexValue;
+				}
 			}
 		}
 	}
@@ -210,6 +216,8 @@ public class DyckPath extends CatalanModel {
 	public boolean checkPathViolation(Boolean[] low, Boolean[] high) {
 		int lowHeight = 0;
 		int highHeight = 2;
+		boolean prevOverlap = false; // overlapping segment is treated invalid, the only case two line intersect is at the corner
+
 		for (int i = 0; i < low.length; i++) {
 			if (low[i]) {
 				lowHeight++;
@@ -223,6 +231,14 @@ public class DyckPath extends CatalanModel {
 			}
 			if (lowHeight > highHeight) {
 				return false;
+			}
+			if (prevOverlap && lowHeight == highHeight) {
+				return false;
+			}
+			if (lowHeight == highHeight) {
+				prevOverlap = true;
+			} else {
+				prevOverlap = false;
 			}
 		}
 		return true;

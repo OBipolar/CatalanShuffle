@@ -16,15 +16,17 @@ public class DyckPathParallelCanvas extends CatalanModelCanvas {
 
     public DyckPathParallelCanvas(int n, double width, double height, double weightedLambda, int size) {
         super(n, width, height);
-        this.model = new DyckPath[size];
-        for (int i = 0; i < size; i++) {
-            model[i] = new DyckPath(n, InitType.BUTTOM);
+        this.model = new DyckPath[size + 1];
+        model[0] = new DyckPath(n, InitType.BUTTOM);
+        for (int i = 1; i < size + 1; i++) {
+            model[i] = new DyckPath(n, InitType.BUTTOM, false, true, true, 1);
         }
         draw();
     }
 
     public void tick() {
-        pathIndex = rand.nextInt(model.length);
+        draw();
+        pathIndex = rand.nextInt(model.length - 1);
         if (pathIndex == 0) {
             model[pathIndex].contextShuffle(model[pathIndex+1].getModel(), null);
         } else if (pathIndex == model.length - 1) {
@@ -32,8 +34,6 @@ public class DyckPathParallelCanvas extends CatalanModelCanvas {
         } else {
             model[pathIndex].contextShuffle(model[pathIndex+1].getModel(), model[pathIndex-1].getModel());
         }
-
-        // TODO: new overlaptinig, can only touch in the corner
 //        model[5].contextShuffle(model[6].getModel(), model[4].getModel());
 //        model[5].shuffleOnce();
         draw();
@@ -70,7 +70,7 @@ public class DyckPathParallelCanvas extends CatalanModelCanvas {
         gc.setStroke(Color.BLUE);
         gc.setLineWidth(5);
 
-        for (int i = 0; i < model.length; i++) {
+        for (int i = 0; i < model.length - 1; i++) {
             DyckPath cur = model[i];
             double curHeight = height - i * unitHeight * 2;
             for (int j = 0; j < length; j++) {
