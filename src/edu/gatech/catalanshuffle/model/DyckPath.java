@@ -68,6 +68,12 @@ public class DyckPath extends CatalanModel {
 				cur[n + i] = false;
 			}
 		}
+		else if (initType == InitType.PARALLEL) {
+			for (int i = 0; i < n; i++) {
+				cur[i] = true;
+				cur[n + i] = false;
+			}
+		}
 		else {
 			for (int i = 0; i < n; i++) {
 				cur[2 * i] = true;
@@ -493,6 +499,7 @@ public class DyckPath extends CatalanModel {
 	public enum InitType {
 		TOP, 
 		BUTTOM, 
-		RANDOM
+		RANDOM,
+		PARALLEL
 	}
 }

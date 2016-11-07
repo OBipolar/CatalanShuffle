@@ -8,8 +8,11 @@ import javafx.scene.paint.Color;
 import java.lang.reflect.Array;
 import java.util.*;
 
+import static edu.gatech.catalanshuffle.model.CatalanModel.rand;
+
 public class DyckPathParallelCanvas extends CatalanModelCanvas {
     private DyckPath[] model;
+    private int pathIndex;
 
     public DyckPathParallelCanvas(int n, double width, double height, double weightedLambda, int size) {
         super(n, width, height);
@@ -21,16 +24,17 @@ public class DyckPathParallelCanvas extends CatalanModelCanvas {
     }
 
     public void tick() {
-//        for (int i = 0; i < model.length; i++) {
-//            System.out.print(i);
-//            model[i].contextShuffle((i - 1) >= 0 ? model[i-1].getModel() : null , (i + 1) < model.length ? model[i+1].getModel() : null);
-////            draw();
-//        }
-//        for (DyckPath p : model) {
-//            p.shuffleOnce();
-//            draw();
-//        }
-        model[5].contextShuffle(model[6].getModel(), model[4].getModel());
+        pathIndex = rand.nextInt(model.length);
+        if (pathIndex == 0) {
+            model[pathIndex].contextShuffle(model[pathIndex+1].getModel(), null);
+        } else if (pathIndex == model.length - 1) {
+            model[pathIndex].contextShuffle(null, model[pathIndex-1].getModel());
+        } else {
+            model[pathIndex].contextShuffle(model[pathIndex+1].getModel(), model[pathIndex-1].getModel());
+        }
+
+        // TODO: new overlaptinig, can only touch in the corner
+//        model[5].contextShuffle(model[6].getModel(), model[4].getModel());
 //        model[5].shuffleOnce();
         draw();
     }
@@ -71,8 +75,8 @@ public class DyckPathParallelCanvas extends CatalanModelCanvas {
             double curHeight = height - i * unitHeight * 2;
             for (int j = 0; j < length; j++) {
                 double nextHeight = curHeight + (cur.getModel()[j] ? - unitHeight : unitHeight);
-                // TODO: in parallel path mod, should be able to go lower than horizon
-                if (i == 5) {
+                // TODO: in parallel path mod, should be able to go lower than lower one
+                if (i == pathIndex) {
                     gc.setStroke(Color.RED);
                 } else {
                     gc.setStroke(new Color(0,0,1,0.3));
