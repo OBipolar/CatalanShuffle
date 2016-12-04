@@ -28,11 +28,11 @@ public class DyckPathParallelCanvas extends CatalanModelCanvas {
         draw();
         pathIndex = rand.nextInt(model.length - 1);
         if (pathIndex == 0) {
-            model[pathIndex].contextShuffle(model[pathIndex+1].getModel(), null);
-        } else if (pathIndex == model.length - 1) {
-            model[pathIndex].contextShuffle(null, model[pathIndex-1].getModel());
+            model[pathIndex].contextShuffle(model[pathIndex+1].getModel(), null, true);
+        } else if (pathIndex == model.length - 2) {
+            model[pathIndex].contextShuffle(null, model[pathIndex-1].getModel(), true);
         } else {
-            model[pathIndex].contextShuffle(model[pathIndex+1].getModel(), model[pathIndex-1].getModel());
+            model[pathIndex].contextShuffle(model[pathIndex+1].getModel(), model[pathIndex-1].getModel(), true);
         }
 //        model[5].contextShuffle(model[6].getModel(), model[4].getModel());
 //        model[5].shuffleOnce();
@@ -75,7 +75,6 @@ public class DyckPathParallelCanvas extends CatalanModelCanvas {
             double curHeight = height - i * unitHeight * 2;
             for (int j = 0; j < length; j++) {
                 double nextHeight = curHeight + (cur.getModel()[j] ? - unitHeight : unitHeight);
-                // TODO: in parallel path mod, should be able to go lower than lower one
                 if (i == pathIndex) {
                     gc.setStroke(Color.RED);
                 } else {

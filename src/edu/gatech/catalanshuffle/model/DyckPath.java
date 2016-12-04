@@ -125,24 +125,27 @@ public class DyckPath extends CatalanModel {
 
 	// In parallel path canvas, make sure path does not corrupt with each other
 	// Keep Shuffling until no corruption
-	public void contextShuffle(Boolean[] next, Boolean[] prev) {
+	public void contextShuffle(Boolean[] next, Boolean[] prev, boolean overlap) {
 		shuffleOnce();
 		if (prev == null) { // first path
-			while (! checkPathViolation(cur, next)) {
+			while (! checkPathViolation(cur, next, overlap)) {
 				System.out.println("First line reshuffle");
 				shuffleOnce();
 			}
 		} else if (next == null) { // last path
-			while (! checkPathViolation(prev, cur)) {
+			while (! checkPathViolation(prev, cur, overlap)) {
 				System.out.println("Last line reshuffle");
 				shuffleOnce();
 			}
 		} else {
-			while ((! checkPathViolation(prev, cur)) || (! checkPathViolation(cur, next))) {
+			while ((! checkPathViolation(prev, cur, overlap)) || (! checkPathViolation(cur, next, overlap))) {
 				shuffleOnce();
 			}
 		}
 	}
+
+
+
 
 	public void shuffleAdj() {
 		int index1 = rand.nextInt(2*n - 1);
@@ -213,7 +216,7 @@ public class DyckPath extends CatalanModel {
 		return true;
 	}
 
-	public boolean checkPathViolation(Boolean[] low, Boolean[] high) {
+	public boolean checkPathViolation(Boolean[] low, Boolean[] high, boolean overlap) {
 		int lowHeight = 0;
 		int highHeight = 2;
 		boolean prevOverlap = false; // overlapping segment is treated invalid, the only case two line intersect is at the corner
@@ -229,16 +232,22 @@ public class DyckPath extends CatalanModel {
 			} else {
 				highHeight--;
 			}
-			if (lowHeight > highHeight) {
-				return false;
-			}
-			if (prevOverlap && lowHeight == highHeight) {
-				return false;
-			}
-			if (lowHeight == highHeight) {
-				prevOverlap = true;
+			if (overlap) { // overlap toggle indicates whether intersection at the corner is valid
+				if (lowHeight > highHeight) {
+					return false;
+				}
+				if (prevOverlap && lowHeight == highHeight) {
+					return false;
+				}
+				if (lowHeight == highHeight) {
+					prevOverlap = true;
+				} else {
+					prevOverlap = false;
+				}
 			} else {
-				prevOverlap = false;
+				if (lowHeight >= highHeight) {
+					return false;
+				}
 			}
 		}
 		return true;

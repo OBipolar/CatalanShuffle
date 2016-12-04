@@ -87,7 +87,8 @@ public class Main extends Application {
         	"Single Dyck Path",
             "100 Dyck Paths",
             "Dyck Path Coupling",
-			"Paralle Dyck Paths"
+			"Paralle Dyck Paths",
+				"Hexagon Dyck Paths"
         );
     	viewType.setValue(viewType.getItems().get(0));
     	
@@ -233,6 +234,7 @@ public class Main extends Application {
             	canvas.setWeightedLambda(lambda);
             }
         });
+        // TODO: add export data solution (JFileChooser)
 //        CheckBox weighted = new CheckBox("weighted");
 //        weighted.setTextFill(Color.WHITE);
 //        weighted.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -261,6 +263,8 @@ public class Main extends Application {
     			return new DyckPathCouplingCanvas(n, width, height, lambda, false, true);
 			case "Paralle Dyck Paths":
 				return new DyckPathParallelCanvas(n, width, height, lambda, 10);
+			case "Hexagon Dyck Paths":
+				return new DyckPathHexagonCanvas(n, width, height, lambda, 10);
 			default:
     			return null;
     	}
