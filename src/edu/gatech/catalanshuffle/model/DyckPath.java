@@ -77,6 +77,12 @@ public class DyckPath extends CatalanModel {
 				cur[n + i] = false;
 			}
 		}
+		else if (initType == InitType.HEXAGONBOTTOM) {
+			for (int i = 0; i < n; i++) {
+				cur[i] = false;
+				cur[n+i] = true;
+			}
+		}
 		else {
 			for (int i = 0; i < n; i++) {
 				cur[2 * i] = true;
@@ -525,6 +531,7 @@ public class DyckPath extends CatalanModel {
 		TOP, 
 		BUTTOM, 
 		RANDOM,
-		PARALLEL
+		PARALLEL,
+		HEXAGONBOTTOM
 	}
 }

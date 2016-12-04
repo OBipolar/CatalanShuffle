@@ -264,7 +264,7 @@ public class Main extends Application {
 			case "Paralle Dyck Paths":
 				return new DyckPathParallelCanvas(n, width, height, lambda, 10);
 			case "Hexagon Dyck Paths":
-				return new DyckPathHexagonCanvas(n, width, height, lambda, 10);
+				return new DyckPathHexagonCanvas(n, width, height, lambda, 7);
 			default:
     			return null;
     	}

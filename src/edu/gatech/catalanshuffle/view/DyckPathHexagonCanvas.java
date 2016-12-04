@@ -17,7 +17,7 @@ public class DyckPathHexagonCanvas extends CatalanModelCanvas {
     public DyckPathHexagonCanvas(int n, double width, double height, double weightedLambda, int size) {
         super(n, width, height);
         this.model = new DyckPath[size + 1];
-        model[0] = new DyckPath(n, InitType.BUTTOM);
+        model[0] = new DyckPath(n, InitType.HEXAGONBOTTOM);
         for (int i = 1; i < size + 1; i++) {
             model[i] = new DyckPath(n, InitType.BUTTOM, false, true, true, 1);
         }
@@ -26,13 +26,13 @@ public class DyckPathHexagonCanvas extends CatalanModelCanvas {
 
     public void tick() {
         draw();
-        pathIndex = rand.nextInt(model.length - 1);
+        pathIndex = rand.nextInt(model.length - 2) + 1;
         if (pathIndex == 0) {
-            model[pathIndex].contextShuffle(model[pathIndex+1].getModel(), null, false);
+            model[pathIndex].contextShuffle(model[pathIndex+1].getModel(), null, true);
         } else if (pathIndex == model.length - 2) {
-            model[pathIndex].contextShuffle(null, model[pathIndex-1].getModel(), false);
+            model[pathIndex].contextShuffle(null, model[pathIndex-1].getModel(), true);
         } else {
-            model[pathIndex].contextShuffle(model[pathIndex+1].getModel(), model[pathIndex-1].getModel(), false);
+            model[pathIndex].contextShuffle(model[pathIndex+1].getModel(), model[pathIndex-1].getModel(), true);
         }
 //        model[5].contextShuffle(model[6].getModel(), model[4].getModel());
 //        model[5].shuffleOnce();
@@ -61,26 +61,28 @@ public class DyckPathHexagonCanvas extends CatalanModelCanvas {
     private void draw() {
         double width = getWidth();
         double height = getHeight();
+        double widthBase = width / 4;
+        double heightBase = height / 6;
         int length = 2 * model[0].getN();
-        double unitWidth = width / length;
-        double unitHeight = height / (2 * model[0].getN());
+        double unitWidth = width / (2 * length);
+        double unitHeight = height / (10 * model[0].getN());
 
         GraphicsContext gc = getGraphicsContext2D();
         gc.clearRect(0, 0, width, height);
         gc.setStroke(Color.BLUE);
-        gc.setLineWidth(5);
+        gc.setLineWidth(3);
 
         for (int i = 0; i < model.length - 1; i++) {
             DyckPath cur = model[i];
-            double curHeight = height - i * unitHeight * 2;
+            double curHeight = height - i * unitHeight * 6- 2 * heightBase;
             for (int j = 0; j < length; j++) {
-                double nextHeight = curHeight + (cur.getModel()[j] ? - unitHeight : unitHeight);
+                double nextHeight = curHeight + (cur.getModel()[j] ? - 3*unitHeight : 3*unitHeight);
                 if (i == pathIndex) {
                     gc.setStroke(Color.RED);
                 } else {
                     gc.setStroke(new Color(0,0,1,0.3));
                 }
-                gc.strokeLine(j*unitWidth, curHeight, (j+1)*unitWidth, nextHeight);
+                gc.strokeLine(j*unitWidth + widthBase, curHeight, (j+1)*unitWidth + widthBase, nextHeight);
                 curHeight = nextHeight;
             }
         }
