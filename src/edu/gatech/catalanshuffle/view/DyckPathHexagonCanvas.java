@@ -17,9 +17,10 @@ public class DyckPathHexagonCanvas extends CatalanModelCanvas {
     public DyckPathHexagonCanvas(int n, double width, double height, double weightedLambda, int size) {
         super(n, width, height);
         this.model = new DyckPath[size + 1];
-        model[0] = new DyckPath(n, InitType.HEXAGONBOTTOM);
+        model[0] = new DyckPath(size, InitType.HEXAGONBOTTOM);
         for (int i = 1; i < size + 1; i++) {
-            model[i] = new DyckPath(n, InitType.BUTTOM, false, true, true, 1);
+            model[i] = new DyckPath(size, InitType.BUTTOM, false, true, true, 1);
+            model[i].contextShuffle(null, model[i-1].getModel(), false);
         }
         draw();
     }
@@ -28,11 +29,11 @@ public class DyckPathHexagonCanvas extends CatalanModelCanvas {
         draw();
         pathIndex = rand.nextInt(model.length - 2) + 1;
         if (pathIndex == 0) {
-            model[pathIndex].contextShuffle(model[pathIndex+1].getModel(), null, true);
+            model[pathIndex].contextShuffle(model[pathIndex+1].getModel(), null, false);
         } else if (pathIndex == model.length - 2) {
-            model[pathIndex].contextShuffle(null, model[pathIndex-1].getModel(), true);
+            model[pathIndex].contextShuffle(null, model[pathIndex-1].getModel(), false);
         } else {
-            model[pathIndex].contextShuffle(model[pathIndex+1].getModel(), model[pathIndex-1].getModel(), true);
+            model[pathIndex].contextShuffle(model[pathIndex+1].getModel(), model[pathIndex-1].getModel(), false);
         }
 //        model[5].contextShuffle(model[6].getModel(), model[4].getModel());
 //        model[5].shuffleOnce();
@@ -62,10 +63,10 @@ public class DyckPathHexagonCanvas extends CatalanModelCanvas {
         double width = getWidth();
         double height = getHeight();
         double widthBase = width / 4;
-        double heightBase = height / 6;
+        double heightBase = height / 8;
         int length = 2 * model[0].getN();
         double unitWidth = width / (2 * length);
-        double unitHeight = height / (10 * model[0].getN());
+        double unitHeight = height / (12 * model[0].getN());
 
         GraphicsContext gc = getGraphicsContext2D();
         gc.clearRect(0, 0, width, height);
