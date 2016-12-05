@@ -70,9 +70,56 @@ public class DyckPathHexagonCanvas extends CatalanModelCanvas {
 
         GraphicsContext gc = getGraphicsContext2D();
         gc.clearRect(0, 0, width, height);
-        gc.setStroke(Color.BLUE);
+        gc.setStroke(Color.WHITE);
         gc.setLineWidth(3);
 
+
+//      Plot green base first
+        for (int i = 1; i < model.length - 1; i++) {
+            double curHeight = height - i * unitHeight * 6- 2 * heightBase;
+            for (int j = 0; j < length; j++) {
+                double nextHeight;
+                double[] xPoints;
+                double[] yPoints;
+                if (j < length / 2) {
+                    nextHeight = curHeight - 3*unitHeight;
+                    xPoints = new double[] {j*unitWidth + widthBase, (j+1)*unitWidth + widthBase, (j+2)*unitWidth + widthBase, (j+1)*unitWidth + widthBase};
+                    yPoints = new double[] {curHeight, nextHeight, curHeight, nextHeight + unitHeight * 6};
+                }  else {
+                    nextHeight = curHeight + 3*unitHeight;
+                    xPoints = new double[] {j*unitWidth + widthBase, (j+1)*unitWidth + widthBase, j*unitWidth + widthBase, (j-1)*unitWidth + widthBase};
+                    yPoints = new double[] {curHeight, nextHeight, curHeight + unitHeight * 6, nextHeight};
+                }
+                gc.setFill(Color.GREEN);
+                gc.fillPolygon(xPoints, yPoints, 4);
+                gc.strokePolygon(xPoints, yPoints, 4);
+                curHeight = nextHeight;
+            }
+        }
+        for (int i = 0; i < model.length - 2; i++) {
+            double curHeight = height - i * unitHeight * 6- 2 * heightBase;
+            for (int j = 0; j < length; j++) {
+                double nextHeight;
+                double[] xPoints;
+                double[] yPoints;
+                if (j < length / 2) {
+                    nextHeight = curHeight + 3*unitHeight;
+                    xPoints = new double[] {j*unitWidth + widthBase, (j+1)*unitWidth + widthBase, (j+2)*unitWidth + widthBase, (j+1)*unitWidth + widthBase};
+                    yPoints = new double[] {curHeight, nextHeight, curHeight, nextHeight - unitHeight * 6};
+                }  else {
+                    nextHeight = curHeight - 3*unitHeight;
+                    xPoints = new double[] {j*unitWidth + widthBase, (j+1)*unitWidth + widthBase, j*unitWidth + widthBase, (j-1)*unitWidth + widthBase};
+                    yPoints = new double[] {curHeight, nextHeight, curHeight -  + unitHeight * 6, nextHeight};
+                }
+                gc.setFill(Color.GREEN);
+                gc.fillPolygon(xPoints, yPoints, 4);
+                gc.strokePolygon(xPoints, yPoints, 4);
+                curHeight = nextHeight;
+            }
+        }
+
+
+//      Plot walls
         for (int i = 1; i < model.length - 1; i++) {
             DyckPath cur = model[i];
             double curHeight = height - i * unitHeight * 6- 2 * heightBase;
@@ -83,7 +130,12 @@ public class DyckPathHexagonCanvas extends CatalanModelCanvas {
                 } else {
                     gc.setFill(Color.BLUE);
                 }
-                gc.setStroke(Color.BLACK);
+
+                if (i == pathIndex) {
+                    gc.setStroke(Color.BLACK);
+                } else {
+                    gc.setStroke(Color.WHITE);
+                }
                 double[] xPoints = {j*unitWidth + widthBase, (j+1)*unitWidth + widthBase, (j+1)*unitWidth + widthBase, j*unitWidth + widthBase};
                 double[] yPoints = {curHeight, nextHeight, nextHeight + unitHeight * 6, curHeight + unitHeight * 6};
                 gc.fillPolygon(xPoints, yPoints, 4);
