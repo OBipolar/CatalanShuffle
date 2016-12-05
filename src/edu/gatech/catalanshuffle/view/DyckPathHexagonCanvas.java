@@ -73,17 +73,21 @@ public class DyckPathHexagonCanvas extends CatalanModelCanvas {
         gc.setStroke(Color.BLUE);
         gc.setLineWidth(3);
 
-        for (int i = 0; i < model.length - 1; i++) {
+        for (int i = 1; i < model.length - 1; i++) {
             DyckPath cur = model[i];
             double curHeight = height - i * unitHeight * 6- 2 * heightBase;
             for (int j = 0; j < length; j++) {
                 double nextHeight = curHeight + (cur.getModel()[j] ? - 3*unitHeight : 3*unitHeight);
-                if (i == pathIndex) {
-                    gc.setStroke(Color.RED);
+                if (cur.getModel()[j]) {
+                    gc.setFill(Color.RED);
                 } else {
-                    gc.setStroke(new Color(0,0,1,0.3));
+                    gc.setFill(Color.BLUE);
                 }
-                gc.strokeLine(j*unitWidth + widthBase, curHeight, (j+1)*unitWidth + widthBase, nextHeight);
+                gc.setStroke(Color.BLACK);
+                double[] xPoints = {j*unitWidth + widthBase, (j+1)*unitWidth + widthBase, (j+1)*unitWidth + widthBase, j*unitWidth + widthBase};
+                double[] yPoints = {curHeight, nextHeight, nextHeight + unitHeight * 6, curHeight + unitHeight * 6};
+                gc.fillPolygon(xPoints, yPoints, 4);
+                gc.strokePolygon(xPoints, yPoints, 4);
                 curHeight = nextHeight;
             }
         }
